@@ -1,0 +1,8 @@
+{
+  "name": "invoice-mern-app",
+  "private": true,
+  "description": "Run backend and frontend from subfolders; see README.md",
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend"
+  }
+}
