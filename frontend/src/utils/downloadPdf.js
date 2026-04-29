@@ -14,24 +14,26 @@
 // }
 
 
-
 export async function downloadInvoicePdf(id, filename = 'invoice.pdf') {
   const token = localStorage.getItem('token');
 
-  // ✅ detect environment
+  // ✅ detect local vs production
   const isLocal =
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1';
 
   const BASE = isLocal
-    ? '' // use Vite proxy locally
-    : 'https://shree-ganesh-angency.onrender.com';
+    ? '' // local → vite proxy works
+    : 'https://shree-ganesh-angency.onrender.com'; // production
 
   const res = await fetch(`${BASE}/api/invoices/${id}/pdf`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 
-  if (!res.ok) throw new Error('Failed to download PDF');
+  if (!res.ok) {
+    console.error('PDF download failed:', res.status);
+    throw new Error('Failed to download PDF');
+  }
 
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
@@ -39,7 +41,7 @@ export async function downloadInvoicePdf(id, filename = 'invoice.pdf') {
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
-  document.body.appendChild(a); // ✅ safer
+  document.body.appendChild(a);
   a.click();
   a.remove();
 
